@@ -115,7 +115,8 @@ def mySearch(problem, state, stack, visited, solutionFound):
             solutionFound = True
             return stack
         for successor in problem.getSuccessors(state):
-            stack.append(successor)
+            if successor[0] not in visited:
+                stack.append(successor)
             mySearch(problem, successor[0], stack, visited, solutionFound)
 
 def breadthFirstSearch(problem):
