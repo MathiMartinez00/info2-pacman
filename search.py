@@ -92,32 +92,36 @@ def depthFirstSearch(problem):
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    #stack = util.Stack()
     stack = []
     visited = []
-    solutionFound = False
-    solutionStack = mySearch(problem, problem.getStartState(), stack, visited, solutionFound)
-    print(solutionStack)
-    return solutionStack
+    solutionFound = [False]
+    mySearch(problem, problem.getStartState(), stack, visited, solutionFound)
+    return [step[1] for step in stack]
 
 def mySearch(problem, state, stack, visited, solutionFound):
     """This functions receives the problem and states and performs a search.
     parameters:
     problem: The problem object.
     state: A state ((x, y) tuple) with coordinates to search from.
-    stack: A stack with (supposedly) all the nodes visited so far.
+    stack: A stack with (supposedly) the current path.
+    visited: A list with all the nodes visited so far.
     solutionFound: Boolean that is set to true if a solution is found."""
-    if not state in visited:
+    if state not in visited:
         visited.append(state)
-        if problem.isGoalState(state) or solutionFound:
-            # TODO: El problema es que no estas guardando el camino.
-            # TODO: El otro problema es que no estas retornando bien.
-            solutionFound = True
-            return stack
-        for successor in problem.getSuccessors(state):
-            if successor[0] not in visited:
-                stack.append(successor)
-            mySearch(problem, successor[0], stack, visited, solutionFound)
+        if problem.isGoalState(state) or solutionFound[0] is True:
+            solutionFound[0] = True
+            return True
+        else:
+            x = [s[0] for s in problem.getSuccessors(state)]
+            if not set(x).issubset(visited):
+                for successor in problem.getSuccessors(state):
+                    if successor[0] not in visited:
+                        stack.append(successor)
+                        mybool = mySearch(problem, successor[0], stack, visited, solutionFound)
+                        if not mybool and solutionFound[0] is False:
+                            stack.pop()
+            else:
+                return False
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
