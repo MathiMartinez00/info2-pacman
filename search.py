@@ -88,10 +88,10 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     fringe = util.Stack()
-    solution = myGraphSearchDfs(problem, fringe)
+    solution = graphSearchDfsAndBfs(problem, fringe)
     return solution
 
-def myOldRecursiveDfs(problem, state, stack, visited, solutionFound):
+def oldRecursiveDfs(problem, state, stack, visited, solutionFound):
     """Performs Depth First Search in a recursive manner.\n
     This function is no longer used because a better way to implemented was
     discovered at a later day (thanks graph search!) but it is left here
@@ -117,7 +117,7 @@ def myOldRecursiveDfs(problem, state, stack, visited, solutionFound):
                 for successor in problem.getSuccessors(state):
                     if successor[0] not in visited:
                         stack.append(successor)
-                        mybool = mySearch(problem, successor[0], stack, visited, solutionFound)
+                        mybool = oldRecursiveDfs(problem, successor[0], stack, visited, solutionFound)
                         if not mybool and solutionFound[0] is False:
                             stack.pop()
             else:
@@ -126,53 +126,14 @@ def myOldRecursiveDfs(problem, state, stack, visited, solutionFound):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     queue = util.Queue()
-    solution = myGraphSearchBfs(problem, queue)
+    solution = graphSearchDfsAndBfs(problem, queue)
     return solution
 
-def myGraphSearchDfs(problem, fringe):
-    """Performs Breadth First Search.\n
+def graphSearchDfsAndBfs(problem, fringe):
+    """Performs Graph Search with the passed fringe strategy.\n
     Parameters:
     problem: The problem object.
-    fringe: The fringe, a LIFO queue.\n
-    Returns:
-    A list of directions to get to the goal or None if a solution wasn't found.\n
-    The fringe is a tuple of (x, y) coordinates and a list of the
-    current set of directions taken so far to get to those coordinates.
-    When a solution is found, the tuple is (1, 1) and the list of directions
-    is returned.
-    """
-    # Initialize values, add start node to visited and fringe.
-    visited = list()
-    state = problem.getStartState()
-    fringe.push((state, ['']))
-    visited.append(state)
-    solutionFound = None
-
-    # Loop until a solution is found or all the nodes were expanded.
-    while solutionFound is None:
-        if fringe.isEmpty():
-            solutionFound = False
-            return None
-        state, current_route = fringe.pop()
-        if problem.isGoalState(state):
-            solutionFound = True
-            # Return the list of directions without the initialized [''] value.
-            return current_route[1:]
-        for succesor in problem.getSuccessors(state):
-            if succesor[0] not in visited:
-                # If successor hasn't been visited then append it to visited.
-                # Then make a copy of the route (because they're a reference)
-                # and add the new direction from the successor.
-                visited.append(succesor[0])
-                route = current_route.copy()
-                route.append(succesor[1])
-                fringe.push((succesor[0], route))
-
-def myGraphSearchBfs(problem, fringe):
-    """Performs Breadth First Search.\n
-    Parameters:
-    problem: The problem object.
-    fringe: The fringe, a LIFO queue.\n
+    fringe: The fringe, either a LIFO queue or FIFO stack.\n
     Returns:
     A list of directions to get to the goal or None if a solution wasn't found.\n
     The fringe is a tuple of (x, y) coordinates and a list of the
