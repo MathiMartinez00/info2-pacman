@@ -171,10 +171,10 @@ def graphSearchDfsAndBfs(problem, fringe):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     fringe = util.PriorityQueue()
-    solution = myGraphSearchUcs(problem, fringe)
+    solution = graphSearchUcs(problem, fringe)
     return solution
 
-def myGraphSearchUcs(problem, fringe):
+def graphSearchUcs(problem, fringe):
     """Performs Uniform Cost Search.\n
     Parameters:
     problem: The problem object.
