@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/pacman.py",
             "console": "integratedTerminal",
-            "args": ["-l", "tinyMaze", "-p", "SearchAgent"]
+            "args": ["-l", "tinyMaze", "-p", "SearchAgent", "-a", "fn=bfs"]
         }
     ]
 }

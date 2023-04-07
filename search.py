@@ -126,7 +126,31 @@ def mySearch(problem, state, stack, visited, solutionFound):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    queue = util.Queue()
+    solution = myGraphSearchBfs(problem, queue)
+    x = list(solution[0][1][1:])
+    return solution
+
+def myGraphSearchBfs(problem, fringe):
+    visited = list()
+    state = problem.getStartState()
+    fringe.push((state, ['']))
+    visited.append(state)
+    solutionFound = None
+    while solutionFound is None:
+        if fringe.isEmpty():
+            solutionFound = False
+            return None
+        state = fringe.pop()
+        if problem.isGoalState(state[0]):
+            solutionFound = True
+            return state[1][1:]
+        for succesor in problem.getSuccessors(state[0]):
+            if succesor[0] not in visited:
+                visited.append(succesor[0])
+                route = state[1].copy()
+                route.append(succesor[1])
+                fringe.push((succesor[0], route))
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
