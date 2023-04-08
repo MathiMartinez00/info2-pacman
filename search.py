@@ -170,6 +170,8 @@ def graphSearchDfsAndBfs(problem, fringe):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
+    # Since the main difference with A* is the existence of a heuristic,
+    # use the same function but with the null heuristic (passed by default).
     fringe = util.PriorityQueue()
     solution = graphSearchWithHeuristic(problem, fringe)
     return solution
