@@ -171,69 +171,30 @@ def graphSearchDfsAndBfs(problem, fringe):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     fringe = util.PriorityQueue()
-    solution = graphSearchUcs(problem, fringe)
+    solution = graphSearchWithHeuristic(problem, fringe)
     return solution
-
-def graphSearchUcs(problem, fringe):
-    """Performs Uniform Cost Search.\n
-    Parameters:
-    problem: The problem object.
-    fringe: The fringe, a priority queue.\n
-    Returns:
-    A list of directions to get to the goal or None if a solution wasn't found.\n
-    The fringe is a tuple of (x, y) coordinates, a list of the
-    current set of directions and the total cost of the route taken so far
-    to get to those coordinates.
-    When a solution is found, the tuple is (1, 1) and the list of directions
-    is returned.
-    """
-    # Initialize values, add start node to visited and fringe.
-    visited = list()
-    state = problem.getStartState()
-    fringe.push((state, [''], 0), 0)
-    visited.append(state)
-    solutionFound = None
-
-    # Loop until a solution is found or all the nodes were expanded.
-    while solutionFound is None:
-        if fringe.isEmpty():
-            solutionFound = False
-            return None
-        state, current_route, current_cost = fringe.pop()
-        if problem.isGoalState(state):
-            solutionFound = True
-            # Return the list of directions without the initialized [''] value.
-            return current_route[1:]
-        for succesor in problem.getSuccessors(state):
-            if succesor[0] not in visited:
-                # If successor hasn't been visited then append it to visited.
-                # Then make a copy of the route (because they're a reference)
-                # and add the new direction from the successor.
-                # Also calculate new 
-                visited.append(succesor[0])
-                route = current_route.copy()
-                route.append(succesor[1])
-                cost = current_cost + succesor[2]
-                fringe.push((succesor[0], route, cost), cost)
 
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
-    goal in the provided SearchProblem.  This heuristic is trivial.
+    goal in the provided SearchProblem. This heuristic is trivial.
     """
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     fringe = util.PriorityQueue()
-    solution = graphSearchAStar(problem, fringe, heuristic)
+    solution = graphSearchWithHeuristic(problem, fringe, heuristic)
     return solution
 
-def graphSearchAStar(problem, fringe, heuristic=nullHeuristic):
-    """Performs Uniform A* Search.\n
+def graphSearchWithHeuristic(problem, fringe, heuristic=nullHeuristic):
+    """
+    Performs Graph Search with the passed heuristic. This function is used for
+    UCS and A* Search, UCS uses nullHeuristic and A* manhattanHeuristic\n
     Parameters:
     problem: The problem object.
-    fringe: The fringe, a priority queue.\n
+    fringe: The fringe, a priority queue.
+    heuristic: Method to use for heuristics, default heuristic always returns 0.\n
     Returns:
     A list of directions to get to the goal or None if a solution wasn't found.\n
     The fringe is a tuple of (x, y) coordinates, a list of the
