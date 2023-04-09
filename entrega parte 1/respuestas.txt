@@ -1,5 +1,15 @@
 NOTA: El search.py mandado fue traducido a Python 3 por medio de una libreria llamada future para poder utilizar la funcionalidad de debugging de Visual Studio Code, la libreria debe ser instalada con pip para poder correr el programa. Para la facilitacion de la correccion se creo un repositorio de GitHub con todos los archivos ya traducidos que puede ser visto en el siguiente enlace: https://github.com/MathiMartinez00/info2-pacman
 
+Documentacion:
+
+	Las 3 funciones creadas utilizan las clases Stack, Queue y PriorityQueue que estan dentro de util.py. Los algoritmos utilizados en las funciones creadas estan basados en el algoritmo de Graph Search que esta en el libro en la pagina 83 (112 del pdf). 
+	La principal modificacion que se hizo fue que se agrego una lista de movimientos al fringe de tal forma que esta ahora contiene tuplas (posicion, historial) donde posicion es una dupla de valores (x, y) e historial es una lista de movimientos para llegar a esa posicion. Todas las funciones creadas retornan el historial.
+	Como BFS y DFS tienen como principal diferencia el funcionamiento del fringe se creo una unica funcion para ellas llamada graphSearchDfsAndBfs() que dependiendo de la estructura de datos del fringe realizara el algoritmo de busqueda correspondiente.
+	Para UCS (y posteriormente A*) tambien se utilizo la misma funcion llamada graphSearchWithHeuristic() solo que UCS utiliza nullHeuristic (que es pasada por defecto) que siempre retorna 0 ya que este algoritmo solo ve el costo del movimiento sin tener en cuenta una heuristica. La funcion tiene un procedimiento similar a la de DFS y BFS solo que esta tambien almacena en el fringe el costo para llegar a esa posicion teniendo finalmente una tupla (posicion, historial, costo_total).
+	Para almacenar las posiciones ya visitadas se utilizo una lista de Python que almacena las duplas (x, y) visitadas. Cuando se expande un nuevo nodo, se agregan las coordenadas a la lista.
+
+Respuestas a preguntas:
+
 1. ¿Corresponde el orden de exploración a lo que esperaba?
 	Si, los algoritmos BFS y UCS fueron mas efectivos que DFS en los casos donde los costos siempre fueron 1. Esto coincide con la teoria que dice que la solucion de BFS es optima si el costo siempre es 1.
 2. Según se puede visualizar, ¿Pac-Man va realmente a todas las posiciones exploradas en su camino a la meta?
