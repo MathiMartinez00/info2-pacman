@@ -1,0 +1,6 @@
+1. ¿Corresponde el orden de exploración a lo que esperaba?
+	Si, los algoritmos BFS y UCS fueron mas efectivos que DFS en los casos donde los costos siempre fueron 1. Esto coincide con la teoria que dice que la solucion de BFS es optima si el costo siempre es 1.
+2. Según se puede visualizar, ¿Pac-Man va realmente a todas las posiciones exploradas en su camino a la meta?
+	No, ya que existen caminos que fueron explorados pero que no forman parte de la solucion. De hecho, en BFS existen caminos que ni fueron explorados debido a que la solucion ya fue encontrada y no se continua la busqueda. Algo similar ocurre en DFS ya que existen caminos que no seran expandidos una vez se encuentre la solucion.
+3. ¿Encuentra el BFS una solución de menor costo?
+	Si, en los casos donde el costo de todos los movimientos es 1. UCS tambien encuentra la solucion de menor costo en estos casos.
