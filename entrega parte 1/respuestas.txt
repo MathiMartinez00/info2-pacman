@@ -1,3 +1,5 @@
+NOTA: El search.py mandado fue traducido a Python 3 por medio de una libreria llamada future para poder utilizar la funcionalidad de debugging de Visual Studio Code, la libreria debe ser instalada con pip para poder correr el programa. Para la facilitacion de la correccion se creo un repositorio de GitHub con todos los archivos ya traducidos que puede ser visto en el siguiente enlace: https://github.com/MathiMartinez00/info2-pacman
+
 1. ¿Corresponde el orden de exploración a lo que esperaba?
 	Si, los algoritmos BFS y UCS fueron mas efectivos que DFS en los casos donde los costos siempre fueron 1. Esto coincide con la teoria que dice que la solucion de BFS es optima si el costo siempre es 1.
 2. Según se puede visualizar, ¿Pac-Man va realmente a todas las posiciones exploradas en su camino a la meta?
