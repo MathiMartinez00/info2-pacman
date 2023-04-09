@@ -1,0 +1,22 @@
+NOTA: El search.py mandado fue traducido a Python 3 por medio de una libreria llamada future para poder utilizar la funcionalidad de debugging de Visual Studio Code, la libreria debe ser instalada con pip para poder correr el programa. Para la facilitacion de la correccion se creo un repositorio de GitHub con todos los archivos ya traducidos que puede ser visto en el siguiente enlace: https://github.com/MathiMartinez00/info2-pacman
+
+Documentacion:
+
+	Para UCS (y posteriormente A*) se utilizo la misma funcion llamada graphSearchWithHeuristic() solo que UCS utiliza nullHeuristic (que es pasada por defecto) que siempre retorna 0 ya que este algoritmo solo ve el costo del movimiento sin tener en cuenta una heuristica. La funcion tiene un procedimiento similar a la de DFS y BFS solo que esta tambien almacena en el fringe el costo para llegar a esa posicion teniendo finalmente una tupla (posicion, historial, costo_total).
+	Para almacenar las posiciones ya visitadas se utilizo una lista de Python que almacena las duplas (x, y) visitadas. Cuando se expande un nuevo nodo, se agregan las coordenadas a la lista.
+
+Documentacion CornersProblem:
+
+	Para la clase CornersProblem se utilizo una namedtuple de Python para representar los estados. La primera llave se llama position y representa la posicion (dupla (x, y)) y la segunda se llama unvisited_corners que es una lista con todos las esquinas que no fueron visitadas hasta el momento.
+	Por ende, el estado inicial es la dupla (starting_position, unvisited_corners) donde unvisited_corners tiene las coordenadas (x, y) de las 4 esquinas.
+	Los estados destino son todos los estados que tengan unvisited_orders vacio aunque como el algoritmo terminara una vez PacMan alcance las 4 esquinas la posicion si o si sera una de las esquinas.
+	Para la heuristica de este problema se utiliza la distancia de Manhattan de PacMan a las 4 esquinas y se devuelve la distancia minima entre todas las distancias calculadas.
+	
+
+Respuestas a preguntas:
+
+1. ¿Que sucede con la esta estrategia de búsqueda A* en el escenario del openMaze?
+	En el escenario de openMaze PacMan sigue abajo hasta antes de que este al mismo nivel de una pared, luego dobla a la izquierda hasta pasar la pared, luego vuelve a bajar hasta estar al mismo nivel que la posicion final y finalmente va en linea recta hasta llegar. Estos giros son debido a que al expandir los nodos eventualmente el algoritmo se encuentra con una pared y como son agregados a la lista de nodos visitados entonces no son expandidos mas.
+2. ¿Cómo está definida su representación de estado para el problema de recorrer todas las esquinas? ¿Qué información incluye? Explique por qué.
+	Para este problema se utilizo una namedtuple (position, unvisited_corners) para representar el estado. Position representa la dupla de coordenadas (x, y) actual de PacMan y unvisited_corners es una lista de coordenadas (x, y) de todas las esquinas que hasta el momento no fueron visitadas. Por ejemplo, si PacMan esta en la posicion (3, 3) y no visito ninguna esquina todavia, el estado sera ((3, 3), [(1, 1), (1, top), (right, 1), (right, top)]). Un posible estado final es ((3, 3), []). Se utilizo la namedtuple ya que hace que el codigo sea mas facil de leer debido a state.position y state.unvisited_corners es mas intuitivo que state[0] y state[1].
+	Se eligio esta representacion para los estados ya que facilita los calculos para la funcion sucesora debido a que solo se debe verificar si la nueva posicion esta dentro de la lista unvisited_corners y en caso de ser asi, se copia la lista y se saca el par de coordenadas referentes a la esquina alcanzada y en el caso contrario simplemente se pone la lista como esta.
