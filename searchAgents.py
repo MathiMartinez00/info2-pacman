@@ -44,6 +44,7 @@ from game import Actions
 import util
 import time
 import search
+import collections
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -269,8 +270,9 @@ def euclideanHeuristic(position, problem, info={}):
 #####################################################
 # This portion is incomplete.  Time to write code!  #
 #####################################################
-import collections
-State = collections.namedtuple('State', ['position', 'visited_corners'])
+
+# To make the code easier to read, use a named tuple.
+State = collections.namedtuple('State', ['position', 'unvisited_corners'])
 
 class CornersProblem(search.SearchProblem):
     """
@@ -293,7 +295,8 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        self.visited_corners = list()
+        # List of all unvisited corners, used for starting state.
+        self.unvisited_corners = list(self.corners)
         self.cost_of_actions = 1
 
     def getStartState(self):
@@ -303,15 +306,15 @@ class CornersProblem(search.SearchProblem):
         """
         # States are going to be represented by a pair with pacman's position
         # and the list of corners he has visited so far.
-        return State(self.startingPosition, self.visited_corners)
+        return State(self.startingPosition, self.unvisited_corners)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        # If all the visited corners are the same set as the defined corners,
-        # then they were all visited.
-        return set(state.visited_corners) == set(self.corners)
+        # If there aren't any more corners to visit, then return true regardless
+        # of position (although it will most certainly be a corner).
+        return len(state.unvisited_corners) == 0
 
     def getSuccessors(self, state):
         """
@@ -337,7 +340,17 @@ class CornersProblem(search.SearchProblem):
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
-                nextState = State((nextx, nexty), state.visited_corners)
+                # If the position is a corner, remove it for the successor.
+                # Else, make the successor use the unvisited_corners.
+                if ((nextx, nexty) in state.unvisited_corners):
+                    # Make a copy of the unvisited corners before removing the nodes
+                    # or else it will be removed from all states (learned this the
+                    # hard way).
+                    unvisited_corners_copy = state.unvisited_corners.copy()
+                    unvisited_corners_copy.remove((nextx, nexty))
+                    nextState = State((nextx, nexty), unvisited_corners_copy)
+                else:
+                    nextState = State((nextx, nexty), state.unvisited_corners)
                 cost = self.cost_of_actions
                 successors.append((nextState, action, cost))
 
@@ -350,13 +363,20 @@ class CornersProblem(search.SearchProblem):
         include an illegal move, return 999999.  This is implemented for you.
         """
         if actions == None: return 999999
-        x,y= self.startingPosition
+        x, y = self.startingPosition
         for action in actions:
             dx, dy = Actions.directionToVector(action)
             x, y = int(x + dx), int(y + dy)
             if self.walls[x][y]: return 999999
         return len(actions)
 
+
+def calculateManhattanDistance(pointA, pointB):
+    """
+    Gets two points and calculates the manhattan distance between them.
+    Used in cornersHeuristic.
+    """
+    return abs(pointA[0] - pointB[0]) + abs(pointA[1] - pointB[1])
 
 def cornersHeuristic(state, problem):
     """
@@ -371,11 +391,21 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
+
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    # Since the document only requires bfs this is left unused but the idea is
+    # to use the minimum manhattan distance between the 4 corners as a heuristic.
+    position, unvisited_corners = state
+    unvisited_corners_count = len(unvisited_corners)
+    if unvisited_corners_count == 0:
+        # The problem has been solved.
+        return 0
+    else:
+        # Return the minimum manhattan distance between all corners.
+        manhattanDistanceForAllCorners = [calculateManhattanDistance(position, corner) for corner in problem.corners]
+        return min(manhattanDistanceForAllCorners)
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"

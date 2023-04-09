@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/pacman.py",
             "console": "integratedTerminal",
-            "args": ["-l", "bigMaze", "-z", ".5", "-p", "SearchAgent", "-a", "fn=astar,heuristic=manhattanHeuristic"]
+            "args": ["-l", "tinyCorners", "-z", ".5", "-p", "SearchAgent", "-a", "fn=bfs,prob=CornersProblem"]
         }
     ]
 }
