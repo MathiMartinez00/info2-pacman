@@ -389,6 +389,30 @@ def cornersHeuristic(state, problem):
 def heuristicaSumaManhattan(state, problem):
     corners = problem.corners # These are the corner coordinates
     distanciaTotalManhattan = 0
+    if len([x for x in state[1] if x is True]) != 3:
+        for i in range(len(corners)):
+            if state[1][i] == False: # si tdv no visite
+                distanciaManhattan = abs(state[0][0] - corners[i][0]) + abs(state[0][1] - corners[i][1])
+                distanciaTotalManhattan += distanciaManhattan # sumale la distancia a la esquina
+    else:
+        for i in range(len(state[1])):
+            if i == 0 and state[1][i] is False:
+                esquinasPorVisitar = [1, 2]
+            elif i == 1 and state[1][i] is False:
+                esquinasPorVisitar = [0, 3]
+            elif i == 2 and state[1][i] is False:
+                esquinasPorVisitar = [0, 3]
+            elif i == 3 and state[1][i] is False:
+                esquinasPorVisitar = [1, 2]
+        for i in esquinasPorVisitar:
+            if state[1][i] == False: # si tdv no visite
+                distanciaManhattan = abs(state[0][0] - corners[i][0]) + abs(state[0][1] - corners[i][1])
+                distanciaTotalManhattan += distanciaManhattan # sumale la distancia a la esquina
+    return distanciaTotalManhattan
+
+def heuristicaSumaManhattanOriginal(state, problem):
+    corners = problem.corners # These are the corner coordinates
+    distanciaTotalManhattan = 0
     for i in range(len(corners)):
         if state[1][i] == False: # si tdv no visite
             distanciaManhattan = abs(state[0][0] - corners[i][0]) + abs(state[0][1] - corners[i][1])
