@@ -281,7 +281,7 @@ class CornersProblem(search.SearchProblem):
     You must select a suitable state space and successor function
     """
 
-    def __init__(self, startingGameState):
+    def __init__(self, startingGameState, costFn = lambda x: 1):
         """
         Stores the walls, pacman's starting position and corners.
         """
@@ -331,7 +331,7 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
+            #   x,y = state
             #   dx, dy = Actions.directionToVector(action)
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
@@ -530,7 +530,11 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #print("****************************************************")
+        #print(startPosition)
+        #problem.isGoalState(startPosition)
+        return search.bfs(problem) #A* con heuristica da error
+        #se puede mejorar???
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -564,9 +568,9 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x,y = state
-
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y] == True
+
 
 def mazeDistance(point1, point2, gameState):
     """
