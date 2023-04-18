@@ -381,7 +381,7 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    # Calculo la distancia manhattan para las esquinas que tdv no visite
+    #TODO: Buscar mejores heuristicas.
     #return 0
     #return heuristicaSumaEuclidiana(state, problem)
     return heuristicaSumaManhattan(state, problem)
@@ -530,8 +530,8 @@ class ClosestDotSearchAgent(SearchAgent):
         #print("****************************************************")
         #print(startPosition)
         #problem.isGoalState(startPosition)
+        #TODO: ver si se puede optimizar mas
         return search.bfs(problem) #A* con heuristica da error
-        #se puede mejorar???
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
