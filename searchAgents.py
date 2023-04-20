@@ -277,37 +277,39 @@ class CornersProblem(search.SearchProblem):
     You must select a suitable state space and successor function
     """
 
-    def __init__(self, startingGameState, costFn = lambda x: 1):
+    def __init__(self, startingGameState, costFn=lambda x: 1):
         """
         Stores the walls, pacman's starting position and corners.
         """
         self.walls = startingGameState.getWalls()
         self.startingPosition = startingGameState.getPacmanPosition()
         top, right = self.walls.height-2, self.walls.width-2
-        self.corners = ((1,1), (1,top), (right, 1), (right, top))
+        self.corners = ((1, 1), (1, top), (right, 1), (right, top))
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
                 print('Warning: no food in corner ' + str(corner))
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        "*** YOUR CODE HERE ***"
         self.cost = costFn
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
-        space)
+        space)\n
+        El estado es una dupla en el que el primer elemento es la dupla de coordenadas
+        x, y y el segundo elemento es una tupla de 4 elementos booleanos donde cada
+        valor representa si esa esquina ya fue visitada (True), la posicion en la tupla
+        es la misma que self.corners, o sea (1, 1), (1, top), (right, 1), (right, top).
         """
-        "*** YOUR CODE HERE ***"
-        # Mi estado va a ser una dupla := (posicion, lista de esquina visitadas o no)
         return (self.startingPosition, (False, False, False, False))
 
     def isGoalState(self, state):
         """
-        Returns whether this search state is a goal state of the problem.
+        Returns whether this search state is a goal state of the problem.\n
+        El estado final es cualquier estado donde las 4 esquinas fueron marcadas como visitadas
+        independiente de la posicion.
         """
-        "*** YOUR CODE HERE ***"
         return state[1] == (True, True, True, True)
 
     def getSuccessors(self, state):
@@ -323,30 +325,28 @@ class CornersProblem(search.SearchProblem):
 
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            # Add a successor state to the successor list if the action is legal
-            # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = state
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
-            "*** YOUR CODE HERE ***"
-            x,y = state[0] 
+            x, y = state[0]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
+
+            # Si el punto no es una pared, verificar si es una esquina y en ese caso crear una nueva copia
+            # del estado con la esquina marcada como True ya que fue visitada, caso contrario
+            # devolver el estado con la posicion nueva y la tupla de booleanos igual.
+            # El costo para todos los movimientos en este problema es 1.
             if not self.walls[nextx][nexty]:
                 if (nextx, nexty) == self.corners[0]: # llego a la esquina de abajo a la izquierda?
-                    nextState = ( (nextx, nexty), (True, state[1][1], state[1][2], state[1][3]) )
+                    nextState = ((nextx, nexty), (True, state[1][1], state[1][2], state[1][3]))
                 elif (nextx, nexty) == self.corners[1]: # llego a la esquina de arriba a la izquierda?
-                    nextState = ( (nextx, nexty), (state[1][0], True, state[1][2], state[1][3]) )
+                    nextState = ((nextx, nexty), (state[1][0], True, state[1][2], state[1][3]))
                 elif (nextx, nexty) == self.corners[2]: # llego a la esquina de abajo a la derecha?
-                    nextState = ( (nextx, nexty), (state[1][0], state[1][1], True, state[1][3]) )
+                    nextState = ((nextx, nexty), (state[1][0], state[1][1], True, state[1][3]))
                 elif (nextx, nexty) == self.corners[3]: # llego a la esquina de arriba a la derecha?
-                    nextState = ( (nextx, nexty), (state[1][0], state[1][1], state[1][2], True) )
-                else: 
-                    nextState = ( (nextx, nexty), (state[1][0], state[1][1], state[1][2], state[1][3]) )   
+                    nextState = ((nextx, nexty), (state[1][0], state[1][1], state[1][2], True))
+                else:
+                    nextState = ((nextx, nexty), (state[1][0], state[1][1], state[1][2], state[1][3]))
                 cost = self.cost(nextState)
-                successors.append( ( nextState, action, cost) )
-           
+                successors.append((nextState, action, cost))
+
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
@@ -355,8 +355,8 @@ class CornersProblem(search.SearchProblem):
         Returns the cost of a particular sequence of actions.  If those actions
         include an illegal move, return 999999.  This is implemented for you.
         """
-        if actions == None: return 999999
-        x,y= self.startingPosition
+        if actions is None: return 999999
+        x, y = self.startingPosition
         for action in actions:
             dx, dy = Actions.directionToVector(action)
             x, y = int(x + dx), int(y + dy)
@@ -380,28 +380,39 @@ def cornersHeuristic(state, problem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
-    #TODO: Buscar mejores heuristicas.
-    #return 0
-    #return heuristicaSumaEuclidiana(state, problem)
     return heuristicaSumaManhattan(state, problem)
 
 def heuristicaSumaManhattan(state, problem):
-    corners = problem.corners # These are the corner coordinates
+    """
+        Esta heuristica calcula la distancia de Manhattan a cada una de las 4 esquinas
+        y luego las suma, retornando esa cantidad.
+        Recibe los siguientes argumentos:
+        state: Estructura de datos representando el estado.
+        problem: El objeto representando el problema.
+    """
+    # Inicializar valores.
+    corners = problem.corners
     distanciaTotalManhattan = 0
+
+    # Recorrer la lista de esquinas en el estado y calcular la distancia de Manhattan desde
+    # donde esta PacMan actualmente a cada esquina.
     for i in range(len(corners)):
-        if state[1][i] == False: # si tdv no visite
+        if state[1][i] is False:
             distanciaManhattan = abs(state[0][0] - corners[i][0]) + abs(state[0][1] - corners[i][1])
-            distanciaTotalManhattan += distanciaManhattan # sumale la distancia a la esquina
+            distanciaTotalManhattan += distanciaManhattan
     return distanciaTotalManhattan
 
 def heuristicaSumaEuclidiana(state, problem):
-    corners = problem.corners # These are the corner coordinates
+    # Inicializar valores.
+    corners = problem.corners
     distanciaTotalEuclidiana = 0
+
+    # Recorrer la lista de esquinas en el estado y calcular la distancia euclidiana desde
+    # donde esta PacMan actualmente a cada esquina.
     for i in range(len(corners)):
-        if state[1][i] == False: # si tdv no visite
-            distanciaEuclidiana = ( (state[0][0] - corners[i][0]) ** 2 + (state[0][1] - corners[i][1]) ** 2 )** 0.5
-            distanciaTotalEuclidiana += distanciaEuclidiana # sumale la distancia a la esquina
+        if state[1][i] is False:
+            distanciaEuclidiana = ((state[0][0] - corners[i][0]) ** 2 + (state[0][1] - corners[i][1]) ** 2) ** 0.5
+            distanciaTotalEuclidiana += distanciaEuclidiana
     return distanciaTotalEuclidiana
 
 class AStarCornersAgent(SearchAgent):
