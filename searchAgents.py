@@ -380,7 +380,7 @@ def cornersHeuristic(state, problem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    return heuristicaSumaManhattan(state, problem)
+    return heuristicaSumaManhattanSinEsquinaOpuesta(state, problem)
 
 def heuristicaSumaManhattanSinEsquinaOpuesta(state, problem):
     """
@@ -400,7 +400,7 @@ def heuristicaSumaManhattanSinEsquinaOpuesta(state, problem):
     # La cantidad de elementos como True significa la cantidad de esquinas visitadas.
     # Cuando quedan 1, 2 o 4 esquinas por visitar, calcular la distancia de Manhattan
     # de todos los elementos.
-    if len([x for x in state[1] if x is True]) != 1:
+    if len([x for x in state[1] if x is True]) != 2:
         for i in range(len(corners)):
             if state[1][i] is False:
                 distanciaManhattan = abs(state[0][0] - corners[i][0]) + abs(state[0][1] - corners[i][1])
