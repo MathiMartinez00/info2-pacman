@@ -382,6 +382,48 @@ def cornersHeuristic(state, problem):
 
     return heuristicaSumaManhattan(state, problem)
 
+def heuristicaSumaManhattanSinEsquinaOpuesta(state, problem):
+    """
+        Esta heuristica originalmente intentaba guiar a PacMan a la esquina adyacente mas cercana
+        cuando le quedaban 3 esquinas por visitar. Sin embargo, por accidente hicimos que haga este
+        proceso cuando tenia 1 esquina por visitar lo que ocasiono que expanda menos nodos que la idea
+        original (que termino expandiendo muchisimos mas).\n
+        Se puede conseguir una reduccion a un mayor de la cantidad de nodos expandidos si se aplica la
+        logica con 2 esquinas restantes, probablemente porque el algoritmo no termina buscando soluciones
+        en las 4 direcciones.
+    """
+    # Inicializar valores.
+    corners = problem.corners
+    distanciaTotalManhattan = 0
+
+    # La lista generada retorna todos los elementos que sean True dentro del estado.
+    # La cantidad de elementos como True significa la cantidad de esquinas visitadas.
+    # Cuando quedan 1, 2 o 4 esquinas por visitar, calcular la distancia de Manhattan
+    # de todos los elementos.
+    if len([x for x in state[1] if x is True]) != 1:
+        for i in range(len(corners)):
+            if state[1][i] is False:
+                distanciaManhattan = abs(state[0][0] - corners[i][0]) + abs(state[0][1] - corners[i][1])
+                distanciaTotalManhattan += distanciaManhattan
+    else:
+        # Determinar cuales son las esquinas adyacentes en base a cual nodo esta marcado como
+        # visitado.
+        for i in range(len(state[1])):
+            if i == 0 and state[1][i] is False:
+                esquinasPorVisitar = [1, 2]
+            elif i == 1 and state[1][i] is False:
+                esquinasPorVisitar = [0, 3]
+            elif i == 2 and state[1][i] is False:
+                esquinasPorVisitar = [0, 3]
+            elif i == 3 and state[1][i] is False:
+                esquinasPorVisitar = [1, 2]
+        # Calcular la distancia de Manhattan de la posicion actual a estas esquinas y retornar su suma.
+        for i in esquinasPorVisitar:
+            if state[1][i] is False:
+                distanciaManhattan = abs(state[0][0] - corners[i][0]) + abs(state[0][1] - corners[i][1])
+                distanciaTotalManhattan += distanciaManhattan
+    return distanciaTotalManhattan
+
 def heuristicaSumaManhattan(state, problem):
     """
         Esta heuristica calcula la distancia de Manhattan a cada una de las 4 esquinas
@@ -403,6 +445,13 @@ def heuristicaSumaManhattan(state, problem):
     return distanciaTotalManhattan
 
 def heuristicaSumaEuclidiana(state, problem):
+    """
+        Esta heuristica calcula la distancia euclidiana a cada una de las 4 esquinas
+        y luego las suma, retornando esa cantidad.
+        Recibe los siguientes argumentos:
+        state: Estructura de datos representando el estado.
+        problem: El objeto representando el problema.
+    """
     # Inicializar valores.
     corners = problem.corners
     distanciaTotalEuclidiana = 0
